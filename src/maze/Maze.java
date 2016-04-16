@@ -126,7 +126,7 @@ public class Maze {
      */
     public MazeCell getCell(int row, int col) {
         //TODO - correct this.
-        return null;
+        return maze[row][col];
     }
 
     /**
@@ -138,6 +138,7 @@ public class Maze {
      */
     public synchronized void visualize(MazeCell cell) {
         //TODO - call the appropriate method from MazeViewer to visualize
+    	viewer.visualize(cell);
     }
 
     /**
@@ -169,7 +170,17 @@ public class Maze {
      *                "random" = random walk.
      */
     public synchronized void solveMaze(String method) {
+    	
         //TODO - call the appropriate solution method
+    	if(method.equals("random")){
+    		solveRandomMaze();
+    	}
+    	else if(method.equals("dfs")){
+    		solveDFSMaze();
+    	}
+    	else if(method.equals("bfs")){
+    		solveBFSMaze();
+    	}
     }
 
     /**
@@ -197,8 +208,30 @@ public class Maze {
      *  Solves the maze by depth first search.
      */
     public synchronized void solveDFSMaze() {
+    	
         //TODO - do a DFS implementation
+    	for(int i = 0; i < maze.length; i++){
+    		for(int j = 0 ; j < maze[0].length; j++){
+    			MazeCell u = maze[i][j];
+    			if(!u.visited()){
+    				solveDFSMazeVisit(u);
+    			}
+    		}
+    	}
+    	visualize(endCell);
+
     }
+    
+    public synchronized void solveDFSMazeVisit(MazeCell u){
+    	u.visit();
+    	for(MazeCell neighbor : u.getNeighbors()){
+    		if(!neighbor.visited()){
+    			solveDFSMazeVisit(neighbor);    		
+    		}
+    	}
+    	u.examine();
+    }
+    
 
     /**
      *  Solves the maze by breadth first search.
@@ -206,8 +239,23 @@ public class Maze {
      *  discovers the end vertex
      */
     public synchronized void solveBFSMaze() {
+    	
         //TODO - do a BFS implementation
+    	startCell.visit();
+    	Queue<MazeCell> Q = new LinkedList<MazeCell>();
+    	Q.offer(startCell);
+    	while(!Q.isEmpty()) { 
+    		MazeCell u = Q.remove();
+    		for(MazeCell neighbor : u.getNeighbors()){
+    			if(!neighbor.visited()){
+    				neighbor.visit();
+    				Q.offer(neighbor);
+    			}
+    		}
+    		u.examined();
+    	}
+    	visualize(endCell);
     }
-
+    
 
 }
