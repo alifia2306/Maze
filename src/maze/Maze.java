@@ -19,6 +19,7 @@ public class Maze {
     private Random generator;
     private MazeCell startCell;
     private MazeCell endCell;
+    private DisjointSet disjointSet;
 
     /**
      *  Creates a maze that has the given number of rows and columns.
@@ -158,6 +159,25 @@ public class Maze {
      */
     public synchronized void makeKruskalMaze() {
         //TODO - use a modified version of Kruskal's algorithm to make the maze
+    	disjointSet = new DisjointSet();
+    	disjointSet.makeSet(maze);
+    	int num = 0;
+    	while(num < maze.length * maze[0].length - 1) {
+    		int randX = generator.nextInt(maze.length);
+    		int randY = generator.nextInt(maze[0].length);
+    		MazeCell current = maze[randX][randY];
+    		MazeCell neighbor = current.getRandomNeighbor();
+            if(neighbor!= null && current.hasWall(neighbor)){
+            	MazeCell currParent = disjointSet.find(current);
+            	MazeCell neighborParent = disjointSet.find(neighbor);
+            	if(!currParent.equals(neighborParent)){
+            		disjointSet.union(currParent, neighborParent);
+            		current.knockDownWall(neighbor);
+            		num++;
+            	}
+            }
+    		
+    	}
     }
     
 
@@ -191,6 +211,7 @@ public class Maze {
      */
     public synchronized void solveRandomMaze() {
         // Start the search at the start cell
+    	long startTime = System.currentTimeMillis();
         MazeCell current = startCell;
 
         // while we haven't reached the end of the maze
@@ -199,16 +220,18 @@ public class Maze {
             MazeCell neighbors[] = current.getNeighbors();
             int index = generator.nextInt(neighbors.length);
             current.examine();
-            current = neighbors[index];    
+            current = neighbors[index];  
         }
         visualize(current);
+    	long estimatedTime = System.currentTimeMillis() - startTime;
+    	System.out.println("Random time used: " + estimatedTime);
     }
 
     /**
      *  Solves the maze by depth first search.
      */
     public synchronized void solveDFSMaze() {
-    	
+    	long startTime = System.currentTimeMillis();
         //TODO - do a DFS implementation
     	for(int i = 0; i < maze.length; i++){
     		for(int j = 0 ; j < maze[0].length; j++){
@@ -219,6 +242,8 @@ public class Maze {
     		}
     	}
     	visualize(endCell);
+    	long estimatedTime = System.currentTimeMillis() - startTime;
+    	System.out.println("DFS time used: " + estimatedTime);
 
     }
     
@@ -239,7 +264,7 @@ public class Maze {
      *  discovers the end vertex
      */
     public synchronized void solveBFSMaze() {
-    	
+    	long startTime = System.currentTimeMillis();
         //TODO - do a BFS implementation
     	startCell.visit();
     	Queue<MazeCell> Q = new LinkedList<MazeCell>();
@@ -255,6 +280,8 @@ public class Maze {
     		u.examined();
     	}
     	visualize(endCell);
+    	long estimatedTime = System.currentTimeMillis() - startTime;
+    	System.out.println("BFS time used: " + estimatedTime);
     }
     
 
