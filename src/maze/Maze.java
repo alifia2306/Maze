@@ -232,14 +232,21 @@ public class Maze {
      */
     public synchronized void solveDFSMaze() {
     	long startTime = System.currentTimeMillis();
+    	
         //TODO - do a DFS implementation
-    	for(int i = 0; i < maze.length; i++){
-    		for(int j = 0 ; j < maze[0].length; j++){
+    	for(int i = 0; i < maze.length  && !endCell.examined(); i++){
+    		for(int j = 0 ; j < maze[0].length || !endCell.examined(); j++){
+    			
     			MazeCell u = maze[i][j];
+    			visualize(u);
     			if(!u.visited()){
     				solveDFSMazeVisit(u);
+    				if(endCell.examined()){
+    					break;
+    				}
     			}
     		}
+    		
     	}
     	visualize(endCell);
     	long estimatedTime = System.currentTimeMillis() - startTime;
@@ -248,10 +255,20 @@ public class Maze {
     }
     
     public synchronized void solveDFSMazeVisit(MazeCell u){
+    	
     	u.visit();
     	for(MazeCell neighbor : u.getNeighbors()){
+    		visualize(neighbor);
     		if(!neighbor.visited()){
-    			solveDFSMazeVisit(neighbor);    		
+    			if(neighbor.equals(endCell)){
+    	    		endCell.visit();
+    	    		endCell.examine();
+    	    		return;
+    	    	}
+    			solveDFSMazeVisit(neighbor);
+    			if(endCell.examined()){
+    	    		return;
+    	    	}
     		}
     	}
     	u.examine();
@@ -269,15 +286,20 @@ public class Maze {
     	startCell.visit();
     	Queue<MazeCell> Q = new LinkedList<MazeCell>();
     	Q.offer(startCell);
-    	while(!Q.isEmpty()) { 
+    	while(!Q.isEmpty() && !endCell.visited()) { 
     		MazeCell u = Q.remove();
+    		visualize(u);
     		for(MazeCell neighbor : u.getNeighbors()){
     			if(!neighbor.visited()){
     				neighbor.visit();
+    				visualize(neighbor);
+    				if(neighbor.equals(endCell)){
+    					break;
+    				}
     				Q.offer(neighbor);
     			}
     		}
-    		u.examined();
+    		u.examine();
     	}
     	visualize(endCell);
     	long estimatedTime = System.currentTimeMillis() - startTime;
