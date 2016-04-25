@@ -229,78 +229,108 @@ public class Maze {
 
     /**
      *  Solves the maze by depth first search.
+     *  starts at the start cell maze[0][0] and stops when dfs
+     *  discovers the end cell. Here cells are marked
+     *  yellow when they are discovered(visited) and marked
+     *  grey when they are fully examined.
      */
     public synchronized void solveDFSMaze() {
     	long startTime = System.currentTimeMillis();
     	
-        //TODO - do a DFS implementation
-    	for(int i = 0; i < maze.length  && !endCell.examined(); i++){
-    		for(int j = 0 ; j < maze[0].length || !endCell.examined(); j++){
-    			
+        // while we haven't reached the end of the maze
+    	for(int i = 0; i < maze.length  && !endCell.visited(); i++){
+    		for(int j = 0 ; j < maze[0].length && !endCell.visited(); j++){
     			MazeCell u = maze[i][j];
+    			
+    			// to visualize intermediate states by repainting
     			visualize(u);
     			if(!u.visited()){
     				solveDFSMazeVisit(u);
-    				if(endCell.examined()){
-    					break;
-    				}
     			}
-    		}
-    		
+    		}  		
     	}
+    	
+    	// To visualize end state.
     	visualize(endCell);
     	long estimatedTime = System.currentTimeMillis() - startTime;
     	System.out.println("DFS time used: " + estimatedTime);
 
     }
     
-    public synchronized void solveDFSMazeVisit(MazeCell u){
+    /**
+     *  Recursive Helper function for executing dfs. 
+     */
+    public synchronized void solveDFSMazeVisit(MazeCell u){ 	
     	
+    	// vertex discovered/visited and turned yellow
     	u.visit();
     	for(MazeCell neighbor : u.getNeighbors()){
+    		
+    		// to visualize intermediate states by repainting
     		visualize(neighbor);
     		if(!neighbor.visited()){
     			if(neighbor.equals(endCell)){
+    				
+    				// endcell visited.
+    				// endcell does not need to be fully examined after this. 
     	    		endCell.visit();
-    	    		endCell.examine();
     	    		return;
     	    	}
     			solveDFSMazeVisit(neighbor);
-    			if(endCell.examined()){
+    			
+    			// will return from all recursive calls when endcell is visited
+    			if(endCell.visited()){
     	    		return;
     	    	}
     		}
     	}
+    	
+    	// cell is examined/ finished and is turned grey
     	u.examine();
     }
     
 
     /**
      *  Solves the maze by breadth first search.
-     *  starts at the start vertex and stops when bfs
-     *  discovers the end vertex
+     *  starts at the start cell and stops when bfs
+     *  discovers the end cell. Here cells are marked
+     *  yellow when they are discovered(visited) and marked
+     *  grey when they are fully examined.
      */
     public synchronized void solveBFSMaze() {
     	long startTime = System.currentTimeMillis();
-        //TODO - do a BFS implementation
-    	startCell.visit();
+    	
+    	// First in first out queue to manage discovered vertices.
     	Queue<MazeCell> Q = new LinkedList<MazeCell>();
+    	
+    	// Start the search at the start cell
+    	startCell.visit();
     	Q.offer(startCell);
+    	
+    	// while we haven't reached the end of the maze
     	while(!Q.isEmpty() && !endCell.visited()) { 
     		MazeCell u = Q.remove();
     		visualize(u);
     		for(MazeCell neighbor : u.getNeighbors()){
     			if(!neighbor.visited()){
-    				neighbor.visit();
-    				visualize(neighbor);
+    				
+    				// cell discovered/visited and turned yellow
+    				neighbor.visit(); 
     				if(neighbor.equals(endCell)){
     					break;
     				}
+    				
+    				// to visualize intermediate states by repainting
+    				visualize(neighbor);
     				Q.offer(neighbor);
     			}
     		}
+    		 
+    		// cell examined and turned grey
     		u.examine();
     	}
+    	
+    	// To visualize end state.
     	visualize(endCell);
     	long estimatedTime = System.currentTimeMillis() - startTime;
     	System.out.println("BFS time used: " + estimatedTime);
