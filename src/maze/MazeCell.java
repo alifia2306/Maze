@@ -279,11 +279,13 @@ public class MazeCell {
 	}
 
 	/**
-	 * Check if the neighbor cell has any walls on the border of main cell to be knocked down.
+	 * Check if the neighbor cell has any walls on the border of main cell to be
+	 * knocked down.
+	 * 
 	 * @param neighbor
 	 *            a neighbor cell
-	 * @return a boolean value indicating if the neighbor has any walls on the border of main cell to be
-	 *         knocked down.
+	 * @return a boolean value indicating if the neighbor has any walls on the
+	 *         border of main cell to be knocked down.
 	 * 
 	 */
 

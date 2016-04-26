@@ -42,22 +42,23 @@ public class DisjointSet {
 	 * @param cell2
 	 */
 	public void union(MazeCell cell1, MazeCell cell2) {
-		//Cover corner cases.
+		// Cover corner cases.
 		if (cell1 == null || cell2 == null) {
 			return;
 		}
-		//Find root nodes for both cells.
+		// Find root nodes for both cells.
 		MazeCell p1 = find(cell1);
 		MazeCell p2 = find(cell2);
-		//If they are under the same root, do nothing.
+		// If they are under the same root, do nothing.
 		if (p1 == p2)
 			return;
-		//If cell's rank is larger, set it's root to be parent of another cell's root.
+		// If cell's rank is larger, set it's root to be parent of another
+		// cell's root.
 		if (p1.getRank() > p2.getRank()) {
 			p2.setParent(p1);
 		} else {
 			p1.setParent(p2);
-			//If they have the same rank, update rank for the root.
+			// If they have the same rank, update rank for the root.
 			if (p1.getRank() == p2.getRank()) {
 				p2.setRank(p2.getRank() + 1);
 			}
