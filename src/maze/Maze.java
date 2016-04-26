@@ -1,14 +1,17 @@
 package maze;
 
-
 import java.util.*;
 
 /**
- *  Contains the maze struture, which is just an array of
+ *  The <code>Maze</code> class contains the maze struture, which is just an array of
  *  <code>MazeCell</code>s.  Also contains the algorithms
  *  for generating and solving the maze.
  *
+ * @author  Alifia Haidery, Jincheng Cao
+ * @version 1.0
+ * @since   2016-04-26
  */
+
 public class Maze {
     
     private int rows, cols;
@@ -126,7 +129,6 @@ public class Maze {
      *  @return  The cell at (<code>row</code>, <code>col</code>)
      */
     public MazeCell getCell(int row, int col) {
-        //TODO - correct this.
         return maze[row][col];
     }
     
@@ -138,7 +140,7 @@ public class Maze {
      *  @param cell Current cell, that the viewer will color.
      */
     public synchronized void visualize(MazeCell cell) {
-        //TODO - call the appropriate method from MazeViewer to visualize
+        //Call the appropriate method from MazeViewer to visualize
         viewer.visualize(cell);
     }
     
@@ -158,21 +160,27 @@ public class Maze {
      *  Forms the maze via Kruskal's algorithm.
      */
     public synchronized void makeKruskalMaze() {
-        //TODO - use a modified version of Kruskal's algorithm to make the maze
+        //Use a modified version of Kruskal's algorithm to make the maze
         disjointSet = new DisjointSet();
         disjointSet.makeSet(maze);
+        //A counter for numbers of walls knocked down.
         int num = 0;
         while(num < maze.length * maze[0].length - 1) {
+        	//Get random index for row and column.
             int randX = generator.nextInt(maze.length);
             int randY = generator.nextInt(maze[0].length);
             MazeCell current = maze[randX][randY];
+            //Get a random neighbor for the selected cell.
             MazeCell neighbor = current.getRandomNeighbor();
+            //If there's a wall to be knocked down. We do union find for the two cells.
             if(neighbor!= null && current.hasWall(neighbor)){
                 MazeCell currParent = disjointSet.find(current);
                 MazeCell neighborParent = disjointSet.find(neighbor);
                 if(!currParent.equals(neighborParent)){
+                	//Union the two cells, knock down the wall.
                     disjointSet.union(currParent, neighborParent);
                     current.knockDownWall(neighbor);
+                    //Increment the counter.
                     num++;
                 }
             }
@@ -191,7 +199,7 @@ public class Maze {
      */
     public synchronized void solveMaze(String method) {
         
-        //TODO - call the appropriate solution method
+        //Call the appropriate solution method
         if(method.equals("random")){
             solveRandomMaze();
         }
