@@ -248,6 +248,12 @@ public class Maze {
     }
     
     public synchronized void solveDFSMazeVisit(MazeCell u){
+    	try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	u.visit();
     	for(MazeCell neighbor : u.getNeighbors()){
     		if(!neighbor.visited()){
@@ -277,7 +283,7 @@ public class Maze {
     				Q.offer(neighbor);
     			}
     		}
-    		u.examined();
+    		u.examine();
     	}
     	visualize(endCell);
     	long estimatedTime = System.currentTimeMillis() - startTime;
